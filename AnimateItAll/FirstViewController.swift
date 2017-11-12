@@ -188,7 +188,7 @@ class FirstViewController: UIViewController {
         // animates on repeat, and autoreverses
         UIView.animate(withDuration: 1.5,
                        delay: 0,
-                       options: [.repeat, .curveEaseInOut, .allowUserInteraction],
+                       options: [.repeat, .autoreverse, .curveEaseInOut, .allowUserInteraction],
                        animations: {
             self.contentView.backgroundColor = lightTeal
             self.contentView.backgroundColor = lightYellow
