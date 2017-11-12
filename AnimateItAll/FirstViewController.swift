@@ -98,6 +98,10 @@ class FirstViewController: UIViewController {
     private func setupInitialStateOfSkipImageView() {
         // just changing alpha as we're going to make it grow from tiny later
         skipImageView.alpha = 0
+        
+        // add rounded corners
+        skipImageView.layer.cornerRadius = 15
+        skipImageView.clipsToBounds = true
     }
     
     private func setupSkipImageAnimator() {
