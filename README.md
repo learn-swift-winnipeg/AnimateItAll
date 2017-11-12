@@ -22,16 +22,24 @@ These animations happen when the first tab appears. You can tap on the Reset tab
 
 ## Action-Based Animations
 
-- Tap on *WINNIPEG* to make it animate it's text colour change between white and black. Animating colour changes requires diving into Core Animation unless you use the UIView.transition() API. Using the UIView.animate() API will not animate the colour change.
+### WINNIPEG Label
+- Tap on *WINNIPEG* to make it animate it's text colour change between white and black.
+- This demonstrates using the UIView.transition method to do what otherwise requires diving into Core Animation. Using the UIView.animate method will not animate the colour change.
+
+### Image #1
 - Tap on the image of Winnipeg's Canadian Museum for Human Rights.
   - This uses the standard UIView.animate API.
   - The background dims and the image moves to the centre of the screen and becomes full width.
   - Tap when expanded and it moves back.
-- Tap on the image of Winnipeg's [SkipTheDishes](www.skipthedishes.com) (Option #1)
+  
+### Image #2
+#### Option #1
+- Tap on the image of Winnipeg's [SkipTheDishes](www.skipthedishes.com)
   - Uses the newer UIViewPropertyAnimator API.
   - The background dims, the image moves to the centre of the screen, its aspect ratio changes from square to 3:2, and becomes full width.
   - Tap when expanded and it moves back.
-- Long-press on the SkipTheDishes image (Option #2)
+#### Option #2
+- Long-press on the SkipTheDishes image
   - Uses the newer UIViewPropertyAnimator API.
   - The thumbnail slowly grows to 1.1x it's normal size, kind of like how iOS mimics 3D touching on a non-3D Touch device.
   - Once it reaches 1.1x its size, it performs the same animation as Option #1 did, popping open.
