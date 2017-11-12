@@ -24,12 +24,8 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var skipImageViewVerticalCenterConstraint: NSLayoutConstraint!
     @IBOutlet weak var skipImageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var skipImageView3x2AspectRatioConstraint: NSLayoutConstraint!
-    @IBOutlet weak var skipImageViewSquareAspectRatioConstraint: NSLayoutConstraint!
     //MARK: Properties
-    private static let normalAnimationDuration: TimeInterval = 0.7
-    private var dimmedViewIsActive: Bool {
-        return dimmedView.alpha == 1
-    }
+    private let normalAnimationDuration: TimeInterval = 0.7
     private var cmhrImageIsFocused = false
     private var skipImageIsFocused = false
     private var winnipegLabelIsWhite = false
@@ -44,6 +40,7 @@ class FirstViewController: UIViewController {
     private var skipImageLongPressProgress: CGFloat {
         guard skipImageLongPressDurationSinceStart != 0 else { return 0 }
         
+        // determine the time since long press started to get progress vs animation duration
         return CGFloat(min(100, skipImageLongPressDurationSinceStart / skipImageAnimatorDuration * 100))
     }
     
@@ -104,6 +101,7 @@ class FirstViewController: UIViewController {
     }
     
     private func setupSkipImageAnimator() {
+        // configure the animator with duration, curve, interruptible and allows interaction
         let animator = UIViewPropertyAnimator.init(duration: skipImageAnimatorDuration, curve: .linear)
         animator.isInterruptible = true
         animator.isUserInteractionEnabled = true
@@ -121,23 +119,25 @@ class FirstViewController: UIViewController {
         animateBackgroundColorChange()
     }
     
+    // Uses the older UIView.animate API
     // Optionally allows you to do something after the animation completes. Defaults to nothing on completion
     private func animateWelcomeLabelOnScreen(onCompletion: (() -> Void)? = nil) {
         // animate its position once the view appeared
         // make the label's center the same as the view's center
         
-        UIView.animate(withDuration: FirstViewController.normalAnimationDuration, animations: {
+        UIView.animate(withDuration: normalAnimationDuration, animations: {
             self.welcomeLabel.center.x = self.view.center.x
         }, completion: { _ in
             onCompletion?()
         })
     }
     
+    // Uses the older UIView.transition API
     private func showWinnipegLabel() {
-        // Can use special transition animation options when using UIView.transition
+        // Can use special transition animation options when using UIView.transition such as flipping the label
         
         UIView.transition(with: winnipegLabel,
-                          duration: FirstViewController.normalAnimationDuration,
+                          duration: normalAnimationDuration,
                           options: [.curveLinear, .transitionFlipFromBottom],
                           animations: {
             self.winnipegLabel.alpha = 1
@@ -149,8 +149,9 @@ class FirstViewController: UIViewController {
          animateInSkipImageView(delay: delay)
     }
     
+    // Uses the older UIView.animate API
     private func animateInCMHRImageView(delay: TimeInterval = 0) {
-        UIView.animate(withDuration: FirstViewController.normalAnimationDuration,
+        UIView.animate(withDuration: normalAnimationDuration,
                        delay: delay,
                        animations: {
             // change centre constraint back to 0 so it's centered
@@ -161,12 +162,13 @@ class FirstViewController: UIViewController {
         })
     }
     
+    // Uses the older UIView.animate API
     private func animateInSkipImageView(delay: TimeInterval = 0) {
         // start out the image tiny before animating
         skipImageView.transform = CGAffineTransform().scaledBy(x: 0, y: 0)
         
         // Change the image back to it's actual transform identity (how it would look without the transform above applied). Also giving it a bit of springiness
-        UIView.animate(withDuration: FirstViewController.normalAnimationDuration,
+        UIView.animate(withDuration: normalAnimationDuration,
                        delay: delay,
                        usingSpringWithDamping: 0.5,
                        initialSpringVelocity: 0.5,
@@ -194,70 +196,8 @@ class FirstViewController: UIViewController {
     }
     
     //MARK: Actions
-    
-    // Uses the new UIViewPropertyAnimator API
-    // Grows the image to 1.1x it's normal size
-    private func prepareSkipImageGrowAnimator() {
-        positionDimmedViewBehind(skipImageView)
-        
-        if skipImageIsFocused {
-            skipImageAnimator?.addAnimations {
-                self.dimmedView.alpha = 0
-                
-                self.skipImageViewVerticalCenterConstraint.priority = 250
-                
-                self.view.layoutIfNeeded()
-            }
-        }
-        
-        skipImageAnimator?.addAnimations {
-            self.skipImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-        }
-        
-        skipImageAnimator?.addCompletion { finalPosition in
-            switch finalPosition {
-                case .current:
-                    break
-                case .start:
-                    self.skipImageIsFocused = false
-                case .end:
-                    if self.skipImageLongPressProgress == 100 {
-                        self.popSkipImageView()
-                        self.skipImageIsFocused = true
-                    } else {
-                        self.skipImageIsFocused = false
-                    }
-            }
-        }
-    }
-    
-    // Uses the new UIViewPropertyAnimator API
-    // Creates an animator in-place that either pops the image open, or closes it, depending on the current state of the image
-    private func popSkipImageView(toFocused: Bool = true) {
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0, options: [.curveEaseOut], animations: {
-            self.dimmedView.alpha = toFocused ? 0.8 : 0
-            
-            self.skipImageViewVerticalCenterConstraint.priority = toFocused ? 751 : 250
-            self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width : 120
-            
-            // the normal square aspect ratio constraint has priority 752, so if it's coming into focus, make the 3x2 aspect ratio constraint's priority higher so it becomes the active constraint
-            self.skipImageView3x2AspectRatioConstraint.priority = toFocused ? 753 : 250
-            
-            // set the transform back to identity in case a previous transform was applied (which happens if it was long-pressed)
-            self.skipImageView.transform = .identity
-            
-            self.view.layoutIfNeeded()
-        }, completion: { _ in
-            self.skipImageIsFocused = toFocused
-        })
-    }
-    
-    // brings dimmed view to front, and then the imageView passed in in front of the dimmed view
-    private func positionDimmedViewBehind(_ imageView: UIImageView) {
-        contentView.bringSubview(toFront: dimmedView)
-        contentView.bringSubview(toFront: imageView)
-    }
-    
+
+    // Uses the older UIView animation APIs
     @IBAction private func cmhrImageTapped() {
         // Use iOS 11's new way to animate corner radius
         
@@ -313,9 +253,13 @@ class FirstViewController: UIViewController {
                     let isCompleted = skipImageLongPressProgress == 100
                     
                     if isCompleted {
+                        // stop the animation; the false is for "withoutFinishing", but we want it to call the 
+                        // completion block of the animator so we pass false.
+                        // then finish the animation at the end point which calls the animation completion block.
                         skipImageAnimator?.stopAnimation(false)
                         skipImageAnimator?.finishAnimation(at: .end)
                     } else {
+                        // runs the animation in reverse to "undo" what happened thus far
                         skipImageAnimator?.isReversed = true
                     }
                     
@@ -334,9 +278,11 @@ class FirstViewController: UIViewController {
         popSkipImageView(toFocused: !skipImageIsFocused)
     }
     
+    //MARK: Animations via Actions
+    
     // Uses the older UIView.animate API
     private func animateCMHRImageAfterTap(isFocusing: Bool) {
-        UIView.animate(withDuration: FirstViewController.normalAnimationDuration / 2,
+        UIView.animate(withDuration: normalAnimationDuration / 2,
                        delay: 0,
                        options: [.curveEaseInOut, .allowUserInteraction],
                        animations: {
@@ -353,9 +299,69 @@ class FirstViewController: UIViewController {
     
     // Uses the older UIView.animate API
     @objc private func showDimmedView(_ show: Bool) {
-        UIView.animate(withDuration: FirstViewController.normalAnimationDuration / 2) {
+        UIView.animate(withDuration: normalAnimationDuration / 2) {
             // If showing, dim the background so it's dark behind the image
             self.dimmedView.alpha = show ? 0.8 : 0
         }
+    }
+    
+    // Uses the new UIViewPropertyAnimator API
+    // Mimics how a 3D touch press looks on icons, but we're doing it with long-press instead
+    // Grows the image to 1.1x it's normal size
+    private func prepareSkipImageGrowAnimator() {
+        positionDimmedViewBehind(skipImageView)
+        
+        // These animations will happen when you start the animator
+        skipImageAnimator?.addAnimations {
+            // grow our imageview to 1.1x it's normal size to mimic the 3D touch look
+            self.skipImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        }
+        
+        // This block happens if stopAnimation(false) is called before finishAnimation(at:)
+        skipImageAnimator?.addCompletion { finalPosition in
+            switch finalPosition {
+                case .current:
+                    break
+                case .start:
+                    self.skipImageIsFocused = false
+                case .end:
+                    // check if long press went to required full duration and if so, pop the image view to focused
+                    // otherwise, just reset
+                    if self.skipImageLongPressProgress == 100 {
+                        self.popSkipImageView(toFocused: true)
+                    } else {
+                        self.skipImageIsFocused = false
+                    }
+            }
+        }
+    }
+    
+    // Uses the new UIViewPropertyAnimator API
+    // Creates an animator in-place that either pops the image open, or closes it, depending on the current state of the image
+    private func popSkipImageView(toFocused: Bool = true) {
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
+            self.dimmedView.alpha = toFocused ? 0.8 : 0
+            
+            self.skipImageViewVerticalCenterConstraint.priority = toFocused ? 751 : 250
+            self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width : 120
+            
+            // the normal square aspect ratio constraint has priority 752, so if it's coming into focus, make the 3x2 aspect ratio constraint's priority higher so it becomes the active constraint
+            self.skipImageView3x2AspectRatioConstraint.priority = toFocused ? 753 : 250
+            
+            // set the transform back to identity in case a previous transform was applied (which happens if it was long-pressed)
+            self.skipImageView.transform = .identity
+            
+            self.view.layoutIfNeeded()
+        }, completion: { _ in
+            self.skipImageIsFocused = toFocused
+        })
+    }
+    
+    //MARK: Helpers
+    
+    // brings dimmed view to front, and then the imageView passed in in front of the dimmed view
+    private func positionDimmedViewBehind(_ imageView: UIImageView) {
+        contentView.bringSubview(toFront: dimmedView)
+        contentView.bringSubview(toFront: imageView)
     }
 }
