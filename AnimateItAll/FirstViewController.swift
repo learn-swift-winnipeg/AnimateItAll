@@ -15,14 +15,25 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var winnipegLabel: UILabel!
     @IBOutlet weak var cmhrImageView: UIImageView!
     @IBOutlet weak var skipImageView: UIImageView!
+    @IBOutlet weak var dimmedView: UIView!
     //MARK: Constraint Outlets
     @IBOutlet weak var cmhrImageViewHorizontalCenterConstraint: NSLayoutConstraint!
+    @IBOutlet weak var cmhrImageViewVerticalCenterConstraint: NSLayoutConstraint!
+    @IBOutlet weak var cmhrImageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var skipImageViewHorizontalCenterConstraint: NSLayoutConstraint!
     //MARK: Properties
     private static let appearanceDuration: TimeInterval = 0.7
+    private var dimmedViewIsActive: Bool {
+        return dimmedView.alpha == 1
+    }
+    private var cmhrImageIsFocused = false
+    private var winnipegLabelIsWhite = false
     
+    
+    //MARK: UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -43,12 +54,16 @@ class FirstViewController: UIViewController {
         setupWinnipegLabel()
         setupInitialStateOfCMHRImageView()
         setupInitialStateOfSkipImageView()
+        setupDimmedView()
+    }
+    
+    private func setupDimmedView() {
+        dimmedView.isHidden = false
+        dimmedView.alpha = 0
     }
     
     private func positionWelcomeLabelOffScreen() {
-        // welcome label doesn't have position constraints.
-        // it respects its placed position in Interface Builder
-        // manually position it off screen to the left
+        // welcome label doesn't have position constraints. it respects its placed position in Interface Builder manually position it off screen to the left
         welcomeLabel.center.x -= view.bounds.width
     }
     
@@ -61,11 +76,7 @@ class FirstViewController: UIViewController {
         // change centre constraint to make the image be off-screen to right
         cmhrImageViewHorizontalCenterConstraint.constant += view.bounds.width
         
-        // usually need to do a layout call when changing constraint constants
-        // otherwise it won't be correct unless iOS does its own layout pass
-        // since this is done in view will appear, it's not really necessary
-        // because iOS has some draw cycles to do after view will appear and
-        // it will move it to the correct place
+        // usually need to do a layout call when changing constraint constants otherwise it won't be correct unless iOS does its own layout pass since this is done in view will appear, it's not really necessary because iOS has some draw cycles to do after view will appear and it will move it to the correct place
         view.layoutIfNeeded()
     }
     
@@ -84,8 +95,7 @@ class FirstViewController: UIViewController {
         animateBackgroundColorChange()
     }
     
-    // Optionally allows you to do something after the animation completes
-    // Defaults to nothing on completion
+    // Optionally allows you to do something after the animation completes. Defaults to nothing on completion
     private func animateWelcomeLabelOnScreen(onCompletion: (() -> Void)? = nil) {
         // animate its position once the view appeared
         // make the label's center the same as the view's center
@@ -120,10 +130,7 @@ class FirstViewController: UIViewController {
             // change centre constraint back to 0 so it's centered
             self.cmhrImageViewHorizontalCenterConstraint.constant = 0
             
-            // remember this is required to animate the change in the 
-            // constraint constant. If it is ommitted, the image will
-            // immediately be in the new position and iOS won't animate
-            // it's change in position
+            // remember this is required to animate the change in the constraint constant. If it is ommitted, the image will immediately be in the new position and iOS won't animate its change in position
             self.view.layoutIfNeeded()
         })
     }
@@ -132,8 +139,7 @@ class FirstViewController: UIViewController {
         // start out the image tiny before animating
         skipImageView.transform = CGAffineTransform().scaledBy(x: 0, y: 0)
         
-        // Change the image back to it's actual transform identity (how it would look without the transform above applied)
-        // Also giving it a bit of springiness
+        // Change the image back to it's actual transform identity (how it would look without the transform above applied). Also giving it a bit of springiness
         UIView.animate(withDuration: FirstViewController.appearanceDuration,
                        delay: delay,
                        usingSpringWithDamping: 0.5,
@@ -151,11 +157,60 @@ class FirstViewController: UIViewController {
         // animates on repeat, and autoreverses
         UIView.animate(withDuration: 1.5,
                        delay: 0,
-                       options: [.repeat, .autoreverse, .curveEaseInOut],
+                       options: [.repeat, .autoreverse, .curveEaseInOut, .allowUserInteraction],
                        animations: {
             self.contentView.backgroundColor = lightTeal
             self.contentView.backgroundColor = lightYellow
         })
     }
+    
+    //MARK: Actions
+    @IBAction private func cmhrImageTapped() {
+        // Use iOS 11's new way to animate corner radius
+        
+        
+        
+        contentView.bringSubview(toFront: dimmedView)
+        contentView.bringSubview(toFront: cmhrImageView)
+        
+        showDimmedView(!cmhrImageIsFocused)
+        animateCMHRImageAfterTap(isExpanding: !cmhrImageIsFocused)
+        
+        cmhrImageIsFocused = !cmhrImageIsFocused
+    }
+    
+    @IBAction private func winnipegLabelTapped() {
+        let isWhite = winnipegLabelIsWhite
+        
+        self.winnipegLabelIsWhite = !isWhite
+        
+        UIView.transition(with: winnipegLabel,
+                          duration: 1,
+                          options: [.transitionCrossDissolve, .allowUserInteraction],
+                          animations: {
+            self.winnipegLabel.textColor = isWhite ? .black : .white
+        })
+    }
+    
+    @IBAction private func skipImageTapped() {
+        print("test button tapped")
+    }
+    
+    private func animateCMHRImageAfterTap(isExpanding: Bool) {
+        UIView.animate(withDuration: FirstViewController.appearanceDuration / 2,
+                       delay: 0,
+                       options: [.curveEaseInOut, .allowUserInteraction],
+                       animations: {
+            self.cmhrImageViewVerticalCenterConstraint.priority = isExpanding ? 751 : 250
+            self.cmhrImageViewWidthConstraint.constant = isExpanding ? self.view.bounds.width - CGFloat(16) : 192
+            
+            self.view.layoutIfNeeded()
+        })
+    }
+    
+    @objc private func showDimmedView(_ show: Bool) {
+        UIView.animate(withDuration: FirstViewController.appearanceDuration / 2) {
+            self.dimmedView.alpha = show ? 0.8 : 0
+        }
+    }
 }
-

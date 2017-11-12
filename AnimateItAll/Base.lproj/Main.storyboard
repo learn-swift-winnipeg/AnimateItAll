@@ -25,42 +25,63 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="42p-T1-cfY">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Welcome to" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eg5-iq-odB">
+                                    <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tqK-dB-oPc">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    </view>
+                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Welcome to" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eg5-iq-odB">
                                         <rect key="frame" x="135" y="70" width="105" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="18"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cmhr" translatesAutoresizingMaskIntoConstraints="NO" id="Rab-5W-Odz">
-                                        <rect key="frame" x="91" y="164" width="192" height="128"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="128" id="YKm-5J-AeG"/>
-                                            <constraint firstAttribute="width" secondItem="Rab-5W-Odz" secondAttribute="height" multiplier="3:2" id="oAL-Xr-l7V"/>
-                                        </constraints>
-                                    </imageView>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="skip" translatesAutoresizingMaskIntoConstraints="NO" id="GfO-O6-tIJ">
+                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WINNIPEG" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9AF-Wt-kYy">
+                                        <rect key="frame" x="94" y="100" width="186" height="43"/>
+                                        <gestureRecognizers/>
+                                        <fontDescription key="fontDescription" type="system" weight="black" pointSize="36"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="03I-xJ-3Cc" appends="YES" id="72j-xD-Agh"/>
+                                        </connections>
+                                    </label>
+                                    <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="skip" translatesAutoresizingMaskIntoConstraints="NO" id="GfO-O6-tIJ">
                                         <rect key="frame" x="91" y="310" width="192" height="128"/>
+                                        <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="GfO-O6-tIJ" secondAttribute="height" multiplier="3:2" id="FSF-Hl-eCW"/>
                                             <constraint firstAttribute="height" constant="128" id="yNK-zy-LaH"/>
                                         </constraints>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="ElH-yn-0CN" appends="YES" id="pzJ-vb-U8s"/>
+                                        </connections>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WINNIPEG" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9AF-Wt-kYy">
-                                        <rect key="frame" x="94" y="100" width="186" height="43"/>
-                                        <fontDescription key="fontDescription" type="system" weight="black" pointSize="36"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cmhr" translatesAutoresizingMaskIntoConstraints="NO" id="Rab-5W-Odz">
+                                        <rect key="frame" x="91" y="164" width="192" height="128"/>
+                                        <gestureRecognizers/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="192" id="mKt-6y-ynh"/>
+                                            <constraint firstAttribute="width" secondItem="Rab-5W-Odz" secondAttribute="height" multiplier="3:2" id="oAL-Xr-l7V"/>
+                                        </constraints>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="j2p-2O-bav" appends="YES" id="owC-Y8-dob"/>
+                                        </connections>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.66712893352621916" green="0.87815196672462992" blue="0.8862745098" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="Rab-5W-Odz" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" constant="164" id="1RU-Qs-PPx"/>
+                                    <constraint firstItem="Rab-5W-Odz" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" priority="750" constant="164" id="1RU-Qs-PPx"/>
+                                    <constraint firstItem="Rab-5W-Odz" firstAttribute="centerY" secondItem="42p-T1-cfY" secondAttribute="centerY" priority="250" id="KPm-gL-UdE"/>
+                                    <constraint firstAttribute="bottom" secondItem="tqK-dB-oPc" secondAttribute="bottom" id="V2w-cn-6lw"/>
                                     <constraint firstItem="9AF-Wt-kYy" firstAttribute="centerX" secondItem="42p-T1-cfY" secondAttribute="centerX" id="VFE-zr-6Uj"/>
+                                    <constraint firstAttribute="trailing" secondItem="tqK-dB-oPc" secondAttribute="trailing" id="YB1-I9-fCr"/>
+                                    <constraint firstItem="tqK-dB-oPc" firstAttribute="leading" secondItem="42p-T1-cfY" secondAttribute="leading" id="cEG-QU-sUW"/>
                                     <constraint firstItem="GfO-O6-tIJ" firstAttribute="centerX" secondItem="42p-T1-cfY" secondAttribute="centerX" id="hsT-iQ-165"/>
                                     <constraint firstItem="Rab-5W-Odz" firstAttribute="centerX" secondItem="42p-T1-cfY" secondAttribute="centerX" id="irW-nu-27v"/>
                                     <constraint firstItem="GfO-O6-tIJ" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" constant="310" id="k6v-UF-KYe"/>
                                     <constraint firstItem="9AF-Wt-kYy" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" constant="100" id="kpD-yS-HGz"/>
+                                    <constraint firstItem="tqK-dB-oPc" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" id="sTu-rw-WG3"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -76,7 +97,10 @@
                     <connections>
                         <outlet property="cmhrImageView" destination="Rab-5W-Odz" id="jtD-vV-NFG"/>
                         <outlet property="cmhrImageViewHorizontalCenterConstraint" destination="irW-nu-27v" id="Ivr-N0-CJq"/>
+                        <outlet property="cmhrImageViewVerticalCenterConstraint" destination="KPm-gL-UdE" id="WNg-t4-kGf"/>
+                        <outlet property="cmhrImageViewWidthConstraint" destination="mKt-6y-ynh" id="97h-8r-cYZ"/>
                         <outlet property="contentView" destination="42p-T1-cfY" id="Ih3-mf-epv"/>
+                        <outlet property="dimmedView" destination="tqK-dB-oPc" id="tlA-hJ-qPb"/>
                         <outlet property="skipImageView" destination="GfO-O6-tIJ" id="Osd-sA-sHK"/>
                         <outlet property="skipImageViewHorizontalCenterConstraint" destination="hsT-iQ-165" id="xwK-en-bSh"/>
                         <outlet property="welcomeLabel" destination="eg5-iq-odB" id="V65-Fg-hOR"/>
@@ -84,8 +108,23 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="j2p-2O-bav">
+                    <connections>
+                        <action selector="cmhrImageTapped" destination="9pv-A4-QxB" id="Lgm-xE-LGi"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="ElH-yn-0CN">
+                    <connections>
+                        <action selector="skipImageTapped" destination="9pv-A4-QxB" id="ePF-yh-OW7"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="03I-xJ-3Cc">
+                    <connections>
+                        <action selector="winnipegLabelTapped" destination="9pv-A4-QxB" id="MR5-So-Zin"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="750" y="-320"/>
+            <point key="canvasLocation" x="750" y="-355"/>
         </scene>
         <!--Second-->
         <scene sceneID="wg7-f3-ORb">
