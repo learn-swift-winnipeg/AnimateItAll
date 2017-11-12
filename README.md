@@ -6,6 +6,10 @@ A simple iOS app to demonstrate how to do some different types of animations to 
 
 It was prepared by [Justin Stanley](https://github.com/jstheoriginal) to present at the *Learn Swift Winnipeg* meetup Wed, Nov 15, 2017.
 
+## Consideration
+
+It would make sense to create an object that handles performing the animations when dealing with the new UIViewPropertyAnimator API. For the purpose of this demo, this all exists within the ViewController itself.
+
 ## Appearance Animations
 
 These animations happen when the first tab appears. You can tap on the Reset tab and return to the Animations tab and it will perform the appearance animations again.
@@ -51,3 +55,7 @@ Apple notes this in its documentation:
 > Use of these methods is discouraged. Use the UIViewPropertyAnimator class to perform animations instead.
 
 See Apple's official documentation for some of the more commonly used methods, such as the [animate method, without spring animations](https://developer.apple.com/documentation/uikit/uiview/1622451-animate), the [animate method, with spring animations](https://developer.apple.com/documentation/uikit/uiview/1622594-animate), and the [transition method](https://developer.apple.com/documentation/uikit/uiview/1622574-transition).
+
+## About the Presenter/Developer
+
+[Justin](https://swiftwithjustin.co/about/) works at [SkipTheDishes](www.skipthedishes.com) as a full time React Native/JavaScript mobile developer (recently switched from Swift to React Native). He also designed and created an app called [BB Links](www.bblinksapp.com), which is used by over 21,000 monthly active Beachbody coaches and has over 1,000 ratings averaging 4.9 stars.
