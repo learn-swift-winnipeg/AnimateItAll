@@ -23,8 +23,10 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var skipImageViewHorizontalCenterConstraint: NSLayoutConstraint!
     @IBOutlet weak var skipImageViewVerticalCenterConstraint: NSLayoutConstraint!
     @IBOutlet weak var skipImageViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var skipImageView3x2AspectRatioConstraint: NSLayoutConstraint!
+    @IBOutlet weak var skipImageViewSquareAspectRatioConstraint: NSLayoutConstraint!
     //MARK: Properties
-    private static let appearanceDuration: TimeInterval = 0.7
+    private static let normalAnimationDuration: TimeInterval = 0.7
     private var dimmedViewIsActive: Bool {
         return dimmedView.alpha == 1
     }
@@ -124,7 +126,7 @@ class FirstViewController: UIViewController {
         // animate its position once the view appeared
         // make the label's center the same as the view's center
         
-        UIView.animate(withDuration: FirstViewController.appearanceDuration, animations: {
+        UIView.animate(withDuration: FirstViewController.normalAnimationDuration, animations: {
             self.welcomeLabel.center.x = self.view.center.x
         }, completion: { _ in
             onCompletion?()
@@ -135,7 +137,7 @@ class FirstViewController: UIViewController {
         // Can use special transition animation options when using UIView.transition
         
         UIView.transition(with: winnipegLabel,
-                          duration: FirstViewController.appearanceDuration,
+                          duration: FirstViewController.normalAnimationDuration,
                           options: [.curveLinear, .transitionFlipFromBottom],
                           animations: {
             self.winnipegLabel.alpha = 1
@@ -148,7 +150,7 @@ class FirstViewController: UIViewController {
     }
     
     private func animateInCMHRImageView(delay: TimeInterval = 0) {
-        UIView.animate(withDuration: FirstViewController.appearanceDuration,
+        UIView.animate(withDuration: FirstViewController.normalAnimationDuration,
                        delay: delay,
                        animations: {
             // change centre constraint back to 0 so it's centered
@@ -164,7 +166,7 @@ class FirstViewController: UIViewController {
         skipImageView.transform = CGAffineTransform().scaledBy(x: 0, y: 0)
         
         // Change the image back to it's actual transform identity (how it would look without the transform above applied). Also giving it a bit of springiness
-        UIView.animate(withDuration: FirstViewController.appearanceDuration,
+        UIView.animate(withDuration: FirstViewController.normalAnimationDuration,
                        delay: delay,
                        usingSpringWithDamping: 0.5,
                        initialSpringVelocity: 0.5,
@@ -174,6 +176,9 @@ class FirstViewController: UIViewController {
         })
     }
     
+    // Uses the old UIView.animate API
+    // repeatedly animates the background colour of the view between two colours.
+    // If you don't put .allowUserInteraction option, your view will NOT respond to any touches
     private func animateBackgroundColorChange() {
         let lightTeal = UIColor(red: 170/255, green: 224/255, blue: 226/255, alpha: 1)
         let lightYellow = UIColor(red: 226/255, green: 226/255, blue: 170/255, alpha: 1)
@@ -181,7 +186,7 @@ class FirstViewController: UIViewController {
         // animates on repeat, and autoreverses
         UIView.animate(withDuration: 1.5,
                        delay: 0,
-                       options: [.repeat, .autoreverse, .curveEaseInOut, .allowUserInteraction],
+                       options: [.repeat, .curveEaseInOut, .allowUserInteraction],
                        animations: {
             self.contentView.backgroundColor = lightTeal
             self.contentView.backgroundColor = lightYellow
@@ -189,9 +194,11 @@ class FirstViewController: UIViewController {
     }
     
     //MARK: Actions
-    private func prepareSkipImageAnimator() {
-        contentView.bringSubview(toFront: dimmedView)
-        contentView.bringSubview(toFront: skipImageView)
+    
+    // Uses the new UIViewPropertyAnimator API
+    // Grows the image to 1.1x it's normal size
+    private func prepareSkipImageGrowAnimator() {
+        positionDimmedViewBehind(skipImageView)
         
         if skipImageIsFocused {
             skipImageAnimator?.addAnimations {
@@ -209,28 +216,34 @@ class FirstViewController: UIViewController {
         
         skipImageAnimator?.addCompletion { finalPosition in
             switch finalPosition {
-            case .current:
-                break
-            case .start:
-                self.skipImageIsFocused = false
-            case .end:
-                if self.skipImageLongPressProgress == 100 {
-                    self.popSkipImageView()
-                    self.skipImageIsFocused = true
-                } else {
+                case .current:
+                    break
+                case .start:
                     self.skipImageIsFocused = false
-                }
+                case .end:
+                    if self.skipImageLongPressProgress == 100 {
+                        self.popSkipImageView()
+                        self.skipImageIsFocused = true
+                    } else {
+                        self.skipImageIsFocused = false
+                    }
             }
         }
     }
     
+    // Uses the new UIViewPropertyAnimator API
+    // Creates an animator in-place that either pops the image open, or closes it, depending on the current state of the image
     private func popSkipImageView(toFocused: Bool = true) {
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0, options: [.curveEaseOut], animations: {
             self.dimmedView.alpha = toFocused ? 0.8 : 0
             
             self.skipImageViewVerticalCenterConstraint.priority = toFocused ? 751 : 250
-            self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width - CGFloat(16) : 192
+            self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width : 120
             
+            // the normal square aspect ratio constraint has priority 752, so if it's coming into focus, make the 3x2 aspect ratio constraint's priority higher so it becomes the active constraint
+            self.skipImageView3x2AspectRatioConstraint.priority = toFocused ? 753 : 250
+            
+            // set the transform back to identity in case a previous transform was applied (which happens if it was long-pressed)
             self.skipImageView.transform = .identity
             
             self.view.layoutIfNeeded()
@@ -239,25 +252,31 @@ class FirstViewController: UIViewController {
         })
     }
     
+    // brings dimmed view to front, and then the imageView passed in in front of the dimmed view
+    private func positionDimmedViewBehind(_ imageView: UIImageView) {
+        contentView.bringSubview(toFront: dimmedView)
+        contentView.bringSubview(toFront: imageView)
+    }
+    
     @IBAction private func cmhrImageTapped() {
         // Use iOS 11's new way to animate corner radius
         
         
-        
-        contentView.bringSubview(toFront: dimmedView)
-        contentView.bringSubview(toFront: cmhrImageView)
-        
+        positionDimmedViewBehind(cmhrImageView)
         showDimmedView(!cmhrImageIsFocused)
         animateCMHRImageAfterTap(isFocusing: !cmhrImageIsFocused)
         
         cmhrImageIsFocused = !cmhrImageIsFocused
     }
     
+    // Uses the older UIView.transition API
     @IBAction private func winnipegLabelTapped() {
         let isWhite = winnipegLabelIsWhite
         
         self.winnipegLabelIsWhite = !isWhite
         
+        // To animate text color, UIView.animate doesn't work
+        // Instead, you must use UIView.transition and do a cross disolve to transition a snapshot of the label using the old colour to the label with the new colour
         UIView.transition(with: winnipegLabel,
                           duration: 1,
                           options: [.transitionCrossDissolve, .allowUserInteraction],
@@ -266,51 +285,76 @@ class FirstViewController: UIViewController {
         })
     }
     
+    // Uses the new UIViewPropertyAnimator API
+    // When the Skip image is long-pressed, it grows in size, almost like a 3D Touch Press
     @IBAction private func skipImageLongPressed(recognizer: UILongPressGestureRecognizer) {
-        switch recognizer.state {
-        case .began:
-            prepareSkipImageAnimator()
-            skipImageAnimator?.startAnimation()
-            skipImageLongPressStartTime = Date()
-        case .changed:
-            // this is just if any fingers move
-            break
-        case .ended:
-            let isCompleted = skipImageLongPressProgress == 100
-            
-            if isCompleted {
-                skipImageAnimator?.stopAnimation(false)
-                skipImageAnimator?.finishAnimation(at: .end)
-            } else {
-                skipImageAnimator?.isReversed = true
+        if skipImageIsFocused {
+            switch recognizer.state {
+                case .began:
+                    // we only want this effect if not focused, so just pop it back to unfocused
+                    popSkipImageView(toFocused: false)
+                case .changed, .ended, .cancelled, .possible, .failed:
+                    break
             }
-            skipImageLongPressStartTime = nil
-        case .possible, .cancelled, .failed:
-            // not states for long press recognizer
-            break
+        } else {
+            // Switch on the long-press recognizer's state to do different animator actions
+            switch recognizer.state {
+                case .began:
+                    // If long-press starting, prepare our animator, start the animation, and set the long-press start time so we can keep track
+                    prepareSkipImageGrowAnimator()
+                    skipImageAnimator?.startAnimation()
+                    skipImageLongPressStartTime = Date()
+                case .changed:
+                    // this is just if any fingers move
+                    break
+                case .ended:
+                    // If long-press held long-enough, we'll stop & finish the animation
+                    // otherwise we'll reverse the animation so it goes back to before the long-press began
+                    let isCompleted = skipImageLongPressProgress == 100
+                    
+                    if isCompleted {
+                        skipImageAnimator?.stopAnimation(false)
+                        skipImageAnimator?.finishAnimation(at: .end)
+                    } else {
+                        skipImageAnimator?.isReversed = true
+                    }
+                    
+                    // Set our start time to nil since it's ended
+                    skipImageLongPressStartTime = nil
+                case .possible, .cancelled, .failed:
+                    // not states for long press recognizer
+                    break
+                }
         }
     }
     
+    // Uses the new UIViewPropertyAnimator API
     @IBAction private func skipImageTapped() {
-        contentView.bringSubview(toFront: dimmedView)
-        contentView.bringSubview(toFront: skipImageView)
+        positionDimmedViewBehind(skipImageView)
         popSkipImageView(toFocused: !skipImageIsFocused)
     }
     
+    // Uses the older UIView.animate API
     private func animateCMHRImageAfterTap(isFocusing: Bool) {
-        UIView.animate(withDuration: FirstViewController.appearanceDuration / 2,
+        UIView.animate(withDuration: FirstViewController.normalAnimationDuration / 2,
                        delay: 0,
                        options: [.curveEaseInOut, .allowUserInteraction],
                        animations: {
+            // If is focusing, make the center vertically constraint have a higher priority than the top constraint
             self.cmhrImageViewVerticalCenterConstraint.priority = isFocusing ? 751 : 250
-            self.cmhrImageViewWidthConstraint.constant = isFocusing ? self.view.bounds.width - CGFloat(16) : 192
+                        
+            // If focusing, change the image view's width to full screen instead of the smaller width
+            self.cmhrImageViewWidthConstraint.constant = isFocusing ? self.view.bounds.width : 192
             
+            // required for priority or constant changes on a constraint for animation
             self.view.layoutIfNeeded()
         })
     }
     
+    // Uses the older UIView.animate API
     @objc private func showDimmedView(_ show: Bool) {
-        UIView.animate(withDuration: FirstViewController.appearanceDuration / 2) {
+        UIView.animate(withDuration: FirstViewController.normalAnimationDuration / 2) {
+            // If showing, dim the background so it's dark behind the image
             self.dimmedView.alpha = show ? 0.8 : 0
         }
     }

@@ -46,12 +46,13 @@
                                             <outletCollection property="gestureRecognizers" destination="03I-xJ-3Cc" appends="YES" id="72j-xD-Agh"/>
                                         </connections>
                                     </label>
-                                    <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="skip" translatesAutoresizingMaskIntoConstraints="NO" id="GfO-O6-tIJ">
-                                        <rect key="frame" x="91" y="310" width="192" height="128"/>
+                                    <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="skip" translatesAutoresizingMaskIntoConstraints="NO" id="GfO-O6-tIJ">
+                                        <rect key="frame" x="127" y="310" width="120" height="120"/>
                                         <gestureRecognizers/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="GfO-O6-tIJ" secondAttribute="height" multiplier="3:2" id="FSF-Hl-eCW"/>
-                                            <constraint firstAttribute="width" constant="192" id="t6E-HH-ee0"/>
+                                            <constraint firstAttribute="width" secondItem="GfO-O6-tIJ" secondAttribute="height" multiplier="3:2" priority="250" id="FSF-Hl-eCW"/>
+                                            <constraint firstAttribute="width" secondItem="GfO-O6-tIJ" secondAttribute="height" multiplier="1:1" priority="751" id="syC-VQ-b35"/>
+                                            <constraint firstAttribute="width" constant="120" id="t6E-HH-ee0"/>
                                         </constraints>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="ElH-yn-0CN" appends="YES" id="pzJ-vb-U8s"/>
@@ -104,7 +105,9 @@
                         <outlet property="contentView" destination="42p-T1-cfY" id="Ih3-mf-epv"/>
                         <outlet property="dimmedView" destination="tqK-dB-oPc" id="tlA-hJ-qPb"/>
                         <outlet property="skipImageView" destination="GfO-O6-tIJ" id="Osd-sA-sHK"/>
+                        <outlet property="skipImageView3x2AspectRatioConstraint" destination="FSF-Hl-eCW" id="cS1-Vp-05Q"/>
                         <outlet property="skipImageViewHorizontalCenterConstraint" destination="hsT-iQ-165" id="xwK-en-bSh"/>
+                        <outlet property="skipImageViewSquareAspectRatioConstraint" destination="syC-VQ-b35" id="agl-NG-Uu0"/>
                         <outlet property="skipImageViewVerticalCenterConstraint" destination="Ebc-ue-9XR" id="6JE-Gv-Gyo"/>
                         <outlet property="skipImageViewWidthConstraint" destination="t6E-HH-ee0" id="rS5-Hf-UZl"/>
                         <outlet property="welcomeLabel" destination="eg5-iq-odB" id="V65-Fg-hOR"/>
