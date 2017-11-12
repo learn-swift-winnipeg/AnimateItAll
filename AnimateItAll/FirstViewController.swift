@@ -21,19 +21,35 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var cmhrImageViewVerticalCenterConstraint: NSLayoutConstraint!
     @IBOutlet weak var cmhrImageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var skipImageViewHorizontalCenterConstraint: NSLayoutConstraint!
+    @IBOutlet weak var skipImageViewVerticalCenterConstraint: NSLayoutConstraint!
+    @IBOutlet weak var skipImageViewWidthConstraint: NSLayoutConstraint!
     //MARK: Properties
     private static let appearanceDuration: TimeInterval = 0.7
     private var dimmedViewIsActive: Bool {
         return dimmedView.alpha == 1
     }
     private var cmhrImageIsFocused = false
+    private var skipImageIsFocused = false
     private var winnipegLabelIsWhite = false
-    
+    private var skipImageAnimatorDuration: TimeInterval = 0.5
+    private var skipImageAnimator: UIViewPropertyAnimator?
+    private var skipImageLongPressStartTime: Date?
+    private var skipImageLongPressDurationSinceStart: TimeInterval {
+        guard let startTime = skipImageLongPressStartTime else { return 0 }
+        
+        return Date().timeIntervalSince(startTime)
+    }
+    private var skipImageLongPressProgress: CGFloat {
+        guard skipImageLongPressDurationSinceStart != 0 else { return 0 }
+        
+        return CGFloat(min(100, skipImageLongPressDurationSinceStart / skipImageAnimatorDuration * 100))
+    }
     
     //MARK: UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupSkipImageAnimator()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,6 +99,14 @@ class FirstViewController: UIViewController {
     private func setupInitialStateOfSkipImageView() {
         // just changing alpha as we're going to make it grow from tiny later
         skipImageView.alpha = 0
+    }
+    
+    private func setupSkipImageAnimator() {
+        let animator = UIViewPropertyAnimator.init(duration: skipImageAnimatorDuration, curve: .linear)
+        animator.isInterruptible = true
+        animator.isUserInteractionEnabled = true
+        
+        skipImageAnimator = animator
     }
     
     //MARK: Appearance Animations
@@ -165,6 +189,56 @@ class FirstViewController: UIViewController {
     }
     
     //MARK: Actions
+    private func prepareSkipImageAnimator() {
+        contentView.bringSubview(toFront: dimmedView)
+        contentView.bringSubview(toFront: skipImageView)
+        
+        if skipImageIsFocused {
+            skipImageAnimator?.addAnimations {
+                self.dimmedView.alpha = 0
+                
+                self.skipImageViewVerticalCenterConstraint.priority = 250
+                
+                self.view.layoutIfNeeded()
+            }
+        }
+        
+        skipImageAnimator?.addAnimations {
+            self.skipImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        }
+        
+        skipImageAnimator?.addCompletion { finalPosition in
+            switch finalPosition {
+            case .current:
+                break
+            case .start:
+                self.skipImageIsFocused = false
+            case .end:
+                if self.skipImageLongPressProgress == 100 {
+                    self.popSkipImageView()
+                    self.skipImageIsFocused = true
+                } else {
+                    self.skipImageIsFocused = false
+                }
+            }
+        }
+    }
+    
+    private func popSkipImageView(toFocused: Bool = true) {
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
+            self.dimmedView.alpha = toFocused ? 0.8 : 0
+            
+            self.skipImageViewVerticalCenterConstraint.priority = toFocused ? 751 : 250
+            self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width - CGFloat(16) : 192
+            
+            self.skipImageView.transform = .identity
+            
+            self.view.layoutIfNeeded()
+        }, completion: { _ in
+            self.skipImageIsFocused = toFocused
+        })
+    }
+    
     @IBAction private func cmhrImageTapped() {
         // Use iOS 11's new way to animate corner radius
         
@@ -174,7 +248,7 @@ class FirstViewController: UIViewController {
         contentView.bringSubview(toFront: cmhrImageView)
         
         showDimmedView(!cmhrImageIsFocused)
-        animateCMHRImageAfterTap(isExpanding: !cmhrImageIsFocused)
+        animateCMHRImageAfterTap(isFocusing: !cmhrImageIsFocused)
         
         cmhrImageIsFocused = !cmhrImageIsFocused
     }
@@ -192,17 +266,44 @@ class FirstViewController: UIViewController {
         })
     }
     
-    @IBAction private func skipImageTapped() {
-        print("test button tapped")
+    @IBAction private func skipImageLongPressed(recognizer: UILongPressGestureRecognizer) {
+        switch recognizer.state {
+        case .began:
+            prepareSkipImageAnimator()
+            skipImageAnimator?.startAnimation()
+            skipImageLongPressStartTime = Date()
+        case .changed:
+            // this is just if any fingers move
+            break
+        case .ended:
+            let isCompleted = skipImageLongPressProgress == 100
+            
+            if isCompleted {
+                skipImageAnimator?.stopAnimation(false)
+                skipImageAnimator?.finishAnimation(at: .end)
+            } else {
+                skipImageAnimator?.isReversed = true
+            }
+            skipImageLongPressStartTime = nil
+        case .possible, .cancelled, .failed:
+            // not states for long press recognizer
+            break
+        }
     }
     
-    private func animateCMHRImageAfterTap(isExpanding: Bool) {
+    @IBAction private func skipImageTapped() {
+        contentView.bringSubview(toFront: dimmedView)
+        contentView.bringSubview(toFront: skipImageView)
+        popSkipImageView(toFocused: !skipImageIsFocused)
+    }
+    
+    private func animateCMHRImageAfterTap(isFocusing: Bool) {
         UIView.animate(withDuration: FirstViewController.appearanceDuration / 2,
                        delay: 0,
                        options: [.curveEaseInOut, .allowUserInteraction],
                        animations: {
-            self.cmhrImageViewVerticalCenterConstraint.priority = isExpanding ? 751 : 250
-            self.cmhrImageViewWidthConstraint.constant = isExpanding ? self.view.bounds.width - CGFloat(16) : 192
+            self.cmhrImageViewVerticalCenterConstraint.priority = isFocusing ? 751 : 250
+            self.cmhrImageViewWidthConstraint.constant = isFocusing ? self.view.bounds.width - CGFloat(16) : 192
             
             self.view.layoutIfNeeded()
         })

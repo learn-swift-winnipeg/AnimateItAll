@@ -51,10 +51,11 @@
                                         <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="GfO-O6-tIJ" secondAttribute="height" multiplier="3:2" id="FSF-Hl-eCW"/>
-                                            <constraint firstAttribute="height" constant="128" id="yNK-zy-LaH"/>
+                                            <constraint firstAttribute="width" constant="192" id="t6E-HH-ee0"/>
                                         </constraints>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="ElH-yn-0CN" appends="YES" id="pzJ-vb-U8s"/>
+                                            <outletCollection property="gestureRecognizers" destination="wYI-sb-h5N" appends="YES" id="Gkg-l3-Sry"/>
                                         </connections>
                                     </imageView>
                                     <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cmhr" translatesAutoresizingMaskIntoConstraints="NO" id="Rab-5W-Odz">
@@ -72,6 +73,7 @@
                                 <color key="backgroundColor" red="0.66712893352621916" green="0.87815196672462992" blue="0.8862745098" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="Rab-5W-Odz" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" priority="750" constant="164" id="1RU-Qs-PPx"/>
+                                    <constraint firstItem="GfO-O6-tIJ" firstAttribute="centerY" secondItem="42p-T1-cfY" secondAttribute="centerY" priority="250" id="Ebc-ue-9XR"/>
                                     <constraint firstItem="Rab-5W-Odz" firstAttribute="centerY" secondItem="42p-T1-cfY" secondAttribute="centerY" priority="250" id="KPm-gL-UdE"/>
                                     <constraint firstAttribute="bottom" secondItem="tqK-dB-oPc" secondAttribute="bottom" id="V2w-cn-6lw"/>
                                     <constraint firstItem="9AF-Wt-kYy" firstAttribute="centerX" secondItem="42p-T1-cfY" secondAttribute="centerX" id="VFE-zr-6Uj"/>
@@ -79,7 +81,7 @@
                                     <constraint firstItem="tqK-dB-oPc" firstAttribute="leading" secondItem="42p-T1-cfY" secondAttribute="leading" id="cEG-QU-sUW"/>
                                     <constraint firstItem="GfO-O6-tIJ" firstAttribute="centerX" secondItem="42p-T1-cfY" secondAttribute="centerX" id="hsT-iQ-165"/>
                                     <constraint firstItem="Rab-5W-Odz" firstAttribute="centerX" secondItem="42p-T1-cfY" secondAttribute="centerX" id="irW-nu-27v"/>
-                                    <constraint firstItem="GfO-O6-tIJ" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" constant="310" id="k6v-UF-KYe"/>
+                                    <constraint firstItem="GfO-O6-tIJ" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" priority="750" constant="310" id="k6v-UF-KYe"/>
                                     <constraint firstItem="9AF-Wt-kYy" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" constant="100" id="kpD-yS-HGz"/>
                                     <constraint firstItem="tqK-dB-oPc" firstAttribute="top" secondItem="42p-T1-cfY" secondAttribute="top" id="sTu-rw-WG3"/>
                                 </constraints>
@@ -103,6 +105,8 @@
                         <outlet property="dimmedView" destination="tqK-dB-oPc" id="tlA-hJ-qPb"/>
                         <outlet property="skipImageView" destination="GfO-O6-tIJ" id="Osd-sA-sHK"/>
                         <outlet property="skipImageViewHorizontalCenterConstraint" destination="hsT-iQ-165" id="xwK-en-bSh"/>
+                        <outlet property="skipImageViewVerticalCenterConstraint" destination="Ebc-ue-9XR" id="6JE-Gv-Gyo"/>
+                        <outlet property="skipImageViewWidthConstraint" destination="t6E-HH-ee0" id="rS5-Hf-UZl"/>
                         <outlet property="welcomeLabel" destination="eg5-iq-odB" id="V65-Fg-hOR"/>
                         <outlet property="winnipegLabel" destination="9AF-Wt-kYy" id="bpx-m1-AOn"/>
                     </connections>
@@ -123,6 +127,11 @@
                         <action selector="winnipegLabelTapped" destination="9pv-A4-QxB" id="MR5-So-Zin"/>
                     </connections>
                 </tapGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="wYI-sb-h5N">
+                    <connections>
+                        <action selector="skipImageLongPressedWithRecognizer:" destination="9pv-A4-QxB" id="P1i-4j-8uf"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="750" y="-355"/>
         </scene>
