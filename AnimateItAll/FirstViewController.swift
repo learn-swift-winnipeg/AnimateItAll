@@ -194,8 +194,8 @@ class FirstViewController: UIViewController {
                        delay: 0,
                        options: [.repeat, .autoreverse, .curveEaseInOut, .allowUserInteraction],
                        animations: {
-            self.contentView.backgroundColor = lightTeal
-            self.contentView.backgroundColor = lightYellow
+            self.view.backgroundColor = lightTeal
+            self.view.backgroundColor = lightYellow
         })
     }
     
@@ -291,7 +291,7 @@ class FirstViewController: UIViewController {
                        options: [.curveEaseInOut, .allowUserInteraction],
                        animations: {
             // If is focusing, make the center vertically constraint have a higher priority than the top constraint
-            self.cmhrImageViewVerticalCenterConstraint.priority = isFocusing ? 751 : 250
+            self.cmhrImageViewVerticalCenterConstraint.priority = UILayoutPriority(rawValue: isFocusing ? 751 : 250)
                         
             // If focusing, change the image view's width to full screen instead of the smaller width
             self.cmhrImageViewWidthConstraint.constant = isFocusing ? self.view.bounds.width : 192
@@ -346,11 +346,11 @@ class FirstViewController: UIViewController {
         UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
             self.dimmedView.alpha = toFocused ? 0.8 : 0
             
-            self.skipImageViewVerticalCenterConstraint.priority = toFocused ? 751 : 250
+            self.skipImageViewVerticalCenterConstraint.priority = UILayoutPriority(rawValue: toFocused ? 751 : 250)
             self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width : 120
             
             // the normal square aspect ratio constraint has priority 752, so if it's coming into focus, make the 3x2 aspect ratio constraint's priority higher so it becomes the active constraint
-            self.skipImageView3x2AspectRatioConstraint.priority = toFocused ? 753 : 250
+            self.skipImageView3x2AspectRatioConstraint.priority = UILayoutPriority(rawValue: toFocused ? 753 : 250)
             
             // set the transform back to identity in case a previous transform was applied (which happens if it was long-pressed)
             self.skipImageView.transform = .identity
