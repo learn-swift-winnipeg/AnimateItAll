@@ -36,7 +36,7 @@ These animations happen when the first tab appears. You can tap on the Reset tab
 #### Option #1
 - Tap on the image of Winnipeg's [SkipTheDishes](www.skipthedishes.com)
   - Uses the newer UIViewPropertyAnimator API.
-  - The background dims, the image moves to the centre of the screen, its aspect ratio changes from square to 3:2, and becomes full width.
+  - The background dims, the image moves to the centre of the screen, its aspect ratio changes from square to 3:2, its rounded corners go back to squared, and becomes full width.
   - Tap when expanded and it moves back.
 #### Option #2
 - Long-press on the SkipTheDishes image
