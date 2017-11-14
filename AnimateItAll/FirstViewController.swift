@@ -346,6 +346,12 @@ class FirstViewController: UIViewController {
         UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
             self.dimmedView.alpha = toFocused ? 0.8 : 0
             
+            // As of iOS 11, you can animate corner radius changes
+            // You can even animate/add corner radius to only some corners using:
+            // .layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
+            // which would apply the corner radius only to the bottom right & top left corners
+            self.skipImageView.layer.cornerRadius = toFocused ? 0 : 15
+            
             self.skipImageViewVerticalCenterConstraint.priority = UILayoutPriority(rawValue: toFocused ? 751 : 250)
             self.skipImageViewWidthConstraint.constant = toFocused ? self.view.bounds.width : 120
             
