@@ -343,7 +343,7 @@ class FirstViewController: UIViewController {
     // Uses the new UIViewPropertyAnimator API
     // Creates an animator in-place that either pops the image open, or closes it, depending on the current state of the image
     private func popSkipImageView(toFocused: Bool = true) {
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: normalAnimationDuration / 2, delay: 0, options: [.curveEaseOut], animations: {
             self.dimmedView.alpha = toFocused ? 0.8 : 0
             
             // As of iOS 11, you can animate corner radius changes
